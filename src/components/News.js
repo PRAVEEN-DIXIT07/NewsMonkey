@@ -1,12 +1,12 @@
-import React, { useEffect , useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NewsItem from './NewsItem'
 import Spinner from './Spinner';
 import PropTypes from 'prop-types'
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const News=(props)=>  {
-    const[articles,setArticles] = useState([])
-    const[loading,setLoading] = useState(true)
+const News = (props) => {
+    const [articles, setArticles] = useState([])
+    const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
     const [totalResults, setTotalResults] = useState(0)
 
@@ -16,7 +16,7 @@ const News=(props)=>  {
     //  document.title = `${capitalizeFirstLetter(props.category)} - NewsMonkey`;
 
 
-    const updateNews=async() =>{
+    const updateNews = async () => {
         props.setProgress(0);
         const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apikey}&page=${page}&pageSize=${props.pageSize}`;
         // setState({ loading: true });
@@ -27,33 +27,32 @@ const News=(props)=>  {
         setLoading(false)
         props.setProgress(100);
     }
-    useEffect(()=>{
-     document.title = `${capitalizeFirstLetter(props.category)} - NewsMonkey`;
-
+    useEffect(() => {
+        document.title = `${capitalizeFirstLetter(props.category)} - NewsMonkey`;
         updateNews();
-    },[])
+    }, [props.category, updateNews])
 
     var fetchMoreData = async () => {
         //setState({page: state.page + 1})
         const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apikey}&page=${page + 1}&pageSize=${props.pageSize}`;
-        setPage(page+1);
+        setPage(page + 1);
         let data = await fetch(url);
         let parsedData = await data.json();
         setArticles(articles.concat(parsedData.articles));
         setTotalResults(parsedData.totalResults);
-      };
+    };
 
-        return (
-            <>
-                <h1 className="text-center" style={{ margin: '35px 0px' , marginTop:'90px'}}>NewsMonkey - Top {capitalizeFirstLetter(props.category)} Headlines</h1>
-                {loading && <Spinner />}
-                <InfiniteScroll
-                    dataLength={articles.length}
-                    next={fetchMoreData}
-                    hasMore={articles.length !== totalResults}
-                    loader={<Spinner/>}
-                >
-                    <div className="container">
+    return (
+        <>
+            <h1 className="text-center" style={{ margin: '35px 0px', marginTop: '90px' }}>NewsMonkey - Top {capitalizeFirstLetter(props.category)} Headlines</h1>
+            {loading && <Spinner />}
+            <InfiniteScroll
+                dataLength={articles.length}
+                next={fetchMoreData}
+                hasMore={articles.length !== totalResults}
+                loader={<Spinner />}
+            >
+                <div className="container">
 
                     <div className="row">
                         {articles.map((element) => {
@@ -62,11 +61,11 @@ const News=(props)=>  {
                             </div>
                         })}
                     </div>
-                    </div>
-                </InfiniteScroll>
+                </div>
+            </InfiniteScroll>
 
-            </>
-        )
+        </>
+    )
 }
 
 News.defaultProps = {
